@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="560" viewBox="0 0 1440 560" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="back" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#1f6fb2" stop-opacity=".07"/><stop offset="1" stop-color="#81cef4" stop-opacity=".36"/></linearGradient>
+    <linearGradient id="mid" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#1f6fb2" stop-opacity=".19"/><stop offset="1" stop-color="#81cef4" stop-opacity=".30"/></linearGradient>
+    <linearGradient id="front" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#81cef4" stop-opacity=".03"/><stop offset="1" stop-color="#81cef4" stop-opacity=".31"/></linearGradient>
+  </defs>
+  <path d="M600 560 C790 514 864 464 1004 365 C1140 271 1274 220 1440 153 L1440 560Z" fill="url(#back)"/>
+  <path d="M675 560 C850 533 1010 441 1147 382 C1275 326 1362 312 1440 288 L1440 560Z" fill="url(#mid)"/>
+  <path d="M0 504 C188 541 284 554 440 560 L0 560Z" fill="#81cef4" opacity=".16"/>
+  <path d="M0 552 C280 514 449 558 658 547 C882 535 1016 489 1196 467 C1320 452 1380 445 1440 439 L1440 560 L0 560Z" fill="url(#front)"/>
+</svg>

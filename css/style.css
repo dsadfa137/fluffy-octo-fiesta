@@ -501,6 +501,34 @@ section.block { padding: 90px 0; }
  .hero h1 { font-size: 1.78rem; }
  .container { padding-inline: 16px; }
 }
+
+/* ============================================================
+   목업 일치 보정: 겹치는 곡선형 물결 4층
+   모든 레이어는 장식 전용. DOM, 이벤트, 폼에 영향 없음.
+   ============================================================ */
+.hero-card {
+  isolation: isolate;
+  background:
+    radial-gradient(950px 540px at 94% 12%, rgba(76,154,231,.16), transparent 78%),
+    linear-gradient(112deg, #0b2e63 0%, #154a9a 68%, #1b559f 100%);
+}
+.hero-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: url('../assets/hero-waves.svg') center bottom / 100% 100% no-repeat;
+}
+/* 이전의 타원형 1개를 사용하지 않아 물결이 중복되지 않게 합니다. */
+.hero-card::after { content: none; }
+.hero-card .hero-content { z-index: 1; position: relative; }
+@media (max-width: 760px) {
+  .hero-card::before {
+    background-image: url('../assets/hero-waves-mobile.svg');
+    background-size: 100% 100%;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
