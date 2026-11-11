@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1b4332">
+  <title>결과확인 · 문경관광공사 공직비위 익명신고센터</title>
+  <meta name="description" content="신고번호와 비밀번호로 처리 경과와 결과를 확인하세요.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a href="#main" class="skip-link">본문 바로가기</a>
+
+  <header class="site-header">
+    <div class="container inner">
+      <a class="brand" href="index.html" aria-label="홈">
+        <span class="logo-mark">문</span>
+        <span class="brand-text"><b>문경관광공사</b><span>공직비위 익명신고센터</span></span>
+      </a>
+      <button class="nav-toggle" aria-label="메뉴 열기" aria-expanded="false"><span></span><span></span><span></span></button>
+      <nav class="site-nav" aria-label="주 메뉴">
+        <ul>
+          <li><a href="index.html">센터 안내</a></li>
+          <li><a href="report.html">신고하기</a></li>
+          <li><a href="result.html" class="active">결과확인</a></li>
+          <li><a href="faq.html">자주 묻는 질문</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="page-head">
+      <div class="container">
+        <div class="breadcrumb"><a href="index.html">홈</a> › 결과확인</div>
+        <h1>신고 처리결과 확인</h1>
+        <p>접수 시 발급받은 신고번호와 비밀번호를 입력하세요.</p>
+      </div>
+    </section>
+
+    <div class="container form-wrap">
+      <div class="form-card">
+        <div class="notice">
+          <span class="ic">🔑</span>
+          <div>신고번호와 비밀번호는 <b>본인만 보관</b>하고 있는 정보입니다. 분실 시 보안을 위해 재발급이 불가능하니 주의하세요.</div>
+        </div>
+
+        <div class="form-error" id="lookupError" role="alert"></div>
+
+        <form id="lookupForm" novalidate>
+          <div class="field">
+            <label for="code">신고번호<span class="req">*</span></label>
+            <input type="text" id="code" name="code" required placeholder="예: MG-2026-ABC123" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="pw">비밀번호<span class="req">*</span></label>
+            <input type="password" id="pw" name="pw" required placeholder="접수 시 설정한 비밀번호">
+          </div>
+          <button type="submit" class="btn btn-primary btn-block btn-lg">조회하기</button>
+        </form>
+
+        <!-- 조회 결과 (데모) -->
+        <div id="resultView" hidden>
+          <div class="status-card">
+            <div class="top">
+              <b>신고번호 <span id="rCode">—</span></b>
+              <span class="badge review" id="rBadge">검토중</span>
+            </div>
+            <div class="body">
+              <p style="color:var(--ink-soft);margin-bottom:18px;font-size:.92rem;">
+                접수하신 신고는 감사 담당 부서에서 사실관계를 확인하고 있습니다.
+                추가 확인이 필요한 경우 아래 담당자 메시지로 안내드립니다.
+              </p>
+              <ul class="timeline">
+                <li><span class="d">신고 접수 완료</span><span class="t">접수 즉시</span></li>
+                <li><span class="d">담당 부서 배정 및 검토 착수</span><span class="t">영업일 기준 1~3일 내</span></li>
+                <li><span class="d">사실관계 조사</span><span class="t">진행중</span></li>
+                <li><span class="d">처리결과 통지</span><span class="t">조사 완료 후</span></li>
+              </ul>
+            </div>
+          </div>
+          <p class="hint" style="margin-top:14px;">※ 본 조회 화면은 데모 예시입니다. 실제 상태·담당자 메시지는 운영 서버에서 신고번호별로 제공됩니다.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="copy">© <span data-year></span> 문경관광공사 공직비위 익명신고센터</div>
+    </div>
+  </footer>
+
+  <script src="js/common.js"></script>
+  <script>
+    (function () {
+      var form = document.getElementById('lookupForm');
+      var err = document.getElementById('lookupError');
+      var view = document.getElementById('resultView');
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        err.classList.remove('show');
+        var code = document.getElementById('code').value.trim();
+        var pw = document.getElementById('pw').value;
+        if (!/^MG-\d{4}-[A-Z0-9]{6}$/i.test(code)) {
+          err.textContent = '신고번호 형식이 올바르지 않습니다. (예: MG-2026-ABC123)';
+          err.classList.add('show'); return;
+        }
+        if (pw.length < 4) {
+          err.textContent = '비밀번호를 확인해 주세요.';
+          err.classList.add('show'); return;
+        }
+        // 실제 운영 시: 서버에 조회 요청 후 상태 표시
+        document.getElementById('rCode').textContent = code.toUpperCase();
+        form.hidden = true;
+        view.hidden = false;
+        view.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    })();
+  </script>
+</body>
+</html>
