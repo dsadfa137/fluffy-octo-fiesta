@@ -6,22 +6,25 @@
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@1.3.9/dist/web/static/pretendard.css');
 
 :root {
-  --forest-900: #1b4332;
-  --forest-700: #2d6a4f;
-  --forest-500: #40916c;
-  --forest-300: #74c69d;
-  --forest-100: #d8f3dc;
-  --gold: #e9b949;
-  --gold-dark: #c99a2e;
+  /* 문경관광공사 브랜드 컬러 (로고 기반) */
+  --forest-900: #0b2e63;  /* 딥 네이비 */
+  --forest-700: #154a9a;  /* 메인 블루 */
+  --forest-500: #1f6fb2;  /* 브라이트 블루 */
+  --forest-300: #8fd0f5;  /* 스카이 */
+  --forest-100: #e6f2fb;  /* 라이트 블루 배경 */
+  --sky: #81cef4;
+  --gold: #2b8fd6;        /* CTA 강조(브라이트 블루) */
+  --gold-dark: #1f6fb2;
+  --accent-red: #d9262c;  /* 로고 레드 포인트 */
   --ink: #1f2933;
   --ink-soft: #52606d;
-  --line: #e4e7eb;
-  --cream: #faf8f3;
+  --line: #dde3ea;
+  --cream: #f4f8fc;       /* 아주 옅은 블루 배경 */
   --white: #ffffff;
-  --danger: #b4232a;
+  --danger: #d9262c;
   --radius: 14px;
-  --shadow-sm: 0 2px 8px rgba(27, 67, 50, .08);
-  --shadow-md: 0 10px 30px rgba(27, 67, 50, .12);
+  --shadow-sm: 0 2px 8px rgba(11, 46, 99, .08);
+  --shadow-md: 0 10px 30px rgba(11, 46, 99, .13);
   --maxw: 1120px;
   --font: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
@@ -53,23 +56,23 @@ button { font-family: inherit; cursor: pointer; }
 /* ---------- Header ---------- */
 .site-header {
   position: sticky; top: 0; z-index: 50;
-  background: rgba(250, 248, 243, .92);
+  background: rgba(255, 255, 255, .95);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--line);
 }
 .site-header .inner {
   display: flex; align-items: center; justify-content: space-between;
-  height: 68px;
+  height: 70px;
 }
 .brand { display: flex; align-items: center; gap: 12px; }
-.brand .logo-mark {
-  width: 38px; height: 38px; border-radius: 10px;
-  background: linear-gradient(135deg, var(--forest-700), var(--forest-500));
-  display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 1.05rem;
-  box-shadow: var(--shadow-sm);
+.brand .logo-img { height: 38px; width: auto; }
+.brand .divider { width: 1px; height: 26px; background: var(--line); }
+.brand .brand-text b { display: block; font-size: .98rem; color: var(--forest-900); letter-spacing: -.3px; }
+.brand .brand-text span { font-size: .74rem; color: var(--ink-soft); }
+@media (max-width: 420px) {
+  .brand .logo-img { height: 30px; }
+  .brand .brand-text b { font-size: .86rem; }
 }
-.brand .brand-text b { display: block; font-size: 1.02rem; color: var(--forest-900); letter-spacing: -.3px; }
-.brand .brand-text span { font-size: .76rem; color: var(--ink-soft); }
 
 .site-nav ul { list-style: none; display: flex; gap: 6px; align-items: center; }
 .site-nav a {
@@ -89,8 +92,8 @@ button { font-family: inherit; cursor: pointer; }
 .hero {
   position: relative; overflow: hidden;
   background:
-    radial-gradient(1100px 500px at 80% -10%, rgba(116,198,157,.25), transparent 60%),
-    linear-gradient(160deg, var(--forest-900) 0%, var(--forest-700) 70%);
+    radial-gradient(1100px 500px at 80% -10%, rgba(129,206,244,.30), transparent 60%),
+    linear-gradient(160deg, var(--forest-900) 0%, var(--forest-700) 72%);
   color: #fff;
 }
 .hero .inner { padding: 72px 0 84px; max-width: 680px; }
@@ -100,7 +103,7 @@ button { font-family: inherit; cursor: pointer; }
   padding: 6px 14px; border-radius: 999px; font-size: .82rem; font-weight: 600; margin-bottom: 20px;
 }
 .hero h1 { font-size: 2.35rem; line-height: 1.28; letter-spacing: -.8px; font-weight: 800; }
-.hero h1 .hl { color: var(--gold); }
+.hero h1 .hl { color: var(--sky); }
 .hero p.lead { margin-top: 18px; font-size: 1.05rem; color: rgba(255,255,255,.88); }
 .hero .actions { margin-top: 32px; display: flex; gap: 12px; flex-wrap: wrap; }
 
@@ -109,7 +112,7 @@ button { font-family: inherit; cursor: pointer; }
   padding: 13px 24px; border-radius: 12px; font-weight: 700; font-size: 1rem;
   border: 0; transition: .18s; text-align: center;
 }
-.btn-gold { background: var(--gold); color: #3a2c05; box-shadow: 0 6px 18px rgba(233,185,73,.35); }
+.btn-gold { background: var(--gold); color: #fff; box-shadow: 0 6px 18px rgba(43,143,214,.4); }
 .btn-gold:hover { background: var(--gold-dark); transform: translateY(-1px); }
 .btn-ghost { background: rgba(255,255,255,.1); color: #fff; border: 1px solid rgba(255,255,255,.3); }
 .btn-ghost:hover { background: rgba(255,255,255,.18); }
@@ -161,7 +164,7 @@ section.block { padding: 64px 0; }
   display: flex; gap: 14px; background: #fff; border: 1px solid var(--line);
   border-radius: var(--radius); padding: 20px;
 }
-.scope-item .dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--gold); margin-top: 8px; }
+.scope-item .dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--accent-red); margin-top: 8px; }
 .scope-item b { color: var(--forest-900); }
 .scope-item p { font-size: .9rem; color: var(--ink-soft); margin-top: 2px; }
 
@@ -279,7 +282,7 @@ section.block { padding: 64px 0; }
 .cta-band p { color: rgba(255,255,255,.82); margin: 12px 0 26px; }
 
 /* ---------- Footer ---------- */
-.site-footer { background: #15321f; color: rgba(255,255,255,.7); padding: 44px 0 30px; font-size: .88rem; }
+.site-footer { background: #07204a; color: rgba(255,255,255,.72); padding: 44px 0 30px; font-size: .88rem; }
 .site-footer .cols { display: flex; justify-content: space-between; gap: 30px; flex-wrap: wrap; }
 .site-footer b { color: #fff; display: block; margin-bottom: 10px; }
 .site-footer a:hover { color: #fff; }
