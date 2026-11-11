@@ -18,11 +18,11 @@
         <span class="divider"></span>
         <span class="brand-text"><b>공직비위 익명신고센터</b><span>Anonymous Report Center</span></span>
       </a>
-      <button class="nav-toggle" aria-label="메뉴 열기" aria-expanded="false"><span></span><span></span><span></span></button>
-      <nav class="site-nav" aria-label="주 메뉴">
+      <button type="button" class="nav-toggle" aria-label="메뉴 열기" aria-expanded="false" aria-controls="main-navigation"><span></span><span></span><span></span></button>
+      <nav id="main-navigation" class="site-nav" aria-label="주 메뉴">
         <ul>
           <li><a href="index.html">센터 안내</a></li>
-          <li><a href="report.html" class="active">신고하기</a></li>
+          <li><a href="report.html" class="active" aria-current="page">신고하기</a></li>
           <li><a href="result.html">결과확인</a></li>
           <li><a href="faq.html">자주 묻는 질문</a></li>
         </ul>
@@ -65,8 +65,8 @@
           </div>
 
           <div class="field">
-            <label>신고 대상 소속(선택)</label>
-            <input type="text" name="dept" placeholder="예: ○○사업부 / 정확히 모르면 비워두세요">
+            <label for="dept">신고 대상 소속(선택)</label>
+            <input type="text" id="dept" name="dept" placeholder="예: ○○사업부 / 정확히 모르면 비워두세요">
           </div>
 
           <div class="field">
@@ -75,8 +75,8 @@
           </div>
 
           <div class="field">
-            <label>발생 시기(선택)</label>
-            <input type="date" name="occurredAt">
+            <label for="occurredAt">발생 시기(선택)</label>
+            <input type="date" id="occurredAt" name="occurredAt">
             <p class="hint">정확한 날짜를 모르면 대략적인 시기만 본문에 적으셔도 됩니다.</p>
           </div>
 
@@ -84,14 +84,14 @@
             <label for="content">신고 내용<span class="req">*</span></label>
             <textarea id="content" name="content" maxlength="4000" required
               placeholder="누가(직위), 언제, 어디서, 무엇을, 어떻게 했는지 육하원칙에 따라 구체적으로 작성해 주세요. 추측보다 확인된 사실 위주로 적어 주시면 조사에 큰 도움이 됩니다."></textarea>
-            <div class="counter"><span id="contentCount">0</span> / 4000자</div>
+            <div class="counter" aria-live="off"><span id="contentCount">0</span> / 4000자</div>
           </div>
 
           <div class="field">
-            <label>증빙자료 첨부(선택)</label>
+            <label for="files">증빙자료 첨부(선택)</label>
             <div class="file-drop" id="fileDrop">
               <input type="file" id="files" name="files" multiple>
-              파일을 끌어다 놓거나 <span class="pick" id="filePick">여기를 클릭</span>해 선택하세요.<br>
+              파일을 끌어다 놓거나 <button type="button" class="pick" id="filePick">여기를 클릭</button>해 선택하세요.<br>
               <small>문서·이미지·영상 등 (개별 20MB 이하)</small>
               <div class="file-list" id="fileList"></div>
             </div>
