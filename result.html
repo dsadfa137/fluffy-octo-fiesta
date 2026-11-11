@@ -59,27 +59,27 @@
           <button type="submit" class="btn btn-primary btn-block btn-lg">조회하기</button>
         </form>
 
-        <!-- 조회 결과 (데모) -->
+        <!-- 조회 결과 -->
         <div id="resultView" hidden>
           <div class="status-card">
             <div class="top">
               <b>신고번호 <span id="rCode">—</span></b>
-              <span class="badge review" id="rBadge">검토중</span>
+              <span class="badge review" id="rBadge">—</span>
             </div>
             <div class="body">
-              <p style="color:var(--ink-soft);margin-bottom:18px;font-size:.92rem;">
-                접수하신 신고는 감사 담당 부서에서 사실관계를 확인하고 있습니다.
-                추가 확인이 필요한 경우 아래 담당자 메시지로 안내드립니다.
-              </p>
-              <ul class="timeline">
-                <li><span class="d">신고 접수 완료</span><span class="t">접수 즉시</span></li>
-                <li><span class="d">담당 부서 배정 및 검토 착수</span><span class="t">영업일 기준 1~3일 내</span></li>
-                <li><span class="d">사실관계 조사</span><span class="t">진행중</span></li>
-                <li><span class="d">처리결과 통지</span><span class="t">조사 완료 후</span></li>
-              </ul>
+              <p style="color:var(--ink-soft);margin-bottom:8px;font-size:.92rem;" id="rTitle"></p>
+              <div class="sec-title" style="font-weight:800;color:var(--forest-900);margin:14px 0 8px;">처리 이력</div>
+              <ul class="timeline" id="rTimeline"></ul>
+              <div class="sec-title" style="font-weight:800;color:var(--forest-900);margin:18px 0 8px;">담당자와의 소통</div>
+              <div id="rMessages"></div>
+              <div class="field" style="margin-top:14px;">
+                <label for="replyBox" style="font-size:.9rem;">담당자에게 추가 메시지 보내기(선택)</label>
+                <textarea id="replyBox" maxlength="4000" placeholder="추가로 전달할 내용이 있으면 작성하세요."></textarea>
+                <button type="button" class="btn btn-primary" id="replyBtn" style="margin-top:10px;">메시지 전송</button>
+                <span id="replyMsg" class="hint" style="margin-left:10px;"></span>
+              </div>
             </div>
           </div>
-          <p class="hint" style="margin-top:14px;">※ 본 조회 화면은 데모 예시입니다. 실제 상태·담당자 메시지는 운영 서버에서 신고번호별로 제공됩니다.</p>
         </div>
       </div>
     </div>
@@ -97,6 +97,31 @@
       var form = document.getElementById('lookupForm');
       var err = document.getElementById('lookupError');
       var view = document.getElementById('resultView');
+      var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+      var fmt = function (t) { return (t || '').replace('T', ' ').slice(0, 16); };
+      var badgeClass = { received: 'received', review: 'review', investigating: 'review', done: 'done', rejected: 'done' };
+      var curCode, curPw;
+
+      function render(d) {
+        curCode = d.reportNo; curPw = document.getElementById('pw').value;
+        document.getElementById('rCode').textContent = d.reportNo;
+        var badge = document.getElementById('rBadge');
+        badge.textContent = d.statusLabel;
+        badge.className = 'badge ' + (badgeClass[d.status] || 'review');
+        document.getElementById('rTitle').textContent = '제목: ' + d.title;
+        document.getElementById('rTimeline').innerHTML = d.timeline.map(function (t) {
+          return '<li><span class="d">' + esc(t.label) + '</span><span class="t">' + fmt(t.at) + '</span></li>'; }).join('');
+        var mv = document.getElementById('rMessages');
+        mv.innerHTML = d.messages.length ? d.messages.map(function (m) {
+          return '<div class="notice" style="margin-bottom:8px;background:' + (m.sender === 'admin' ? 'var(--forest-100)' : '#fff') +
+            ';border-color:var(--line);"><div><b>' + (m.sender === 'admin' ? '담당자' : '신고자') + '</b> · ' +
+            fmt(m.at) + '<br>' + esc(m.body) + '</div></div>'; }).join('')
+          : '<p class="hint">아직 담당자 메시지가 없습니다.</p>';
+        form.hidden = true; view.hidden = false;
+        view.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
       form.addEventListener('submit', function (e) {
         e.preventDefault();
         err.classList.remove('show');
@@ -106,15 +131,28 @@
           err.textContent = '신고번호 형식이 올바르지 않습니다. (예: MG-2026-ABC123)';
           err.classList.add('show'); return;
         }
-        if (pw.length < 4) {
-          err.textContent = '비밀번호를 확인해 주세요.';
-          err.classList.add('show'); return;
-        }
-        // 실제 운영 시: 서버에 조회 요청 후 상태 표시
-        document.getElementById('rCode').textContent = code.toUpperCase();
-        form.hidden = true;
-        view.hidden = false;
-        view.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        fetch('/api/reports/lookup', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reportNo: code, password: pw }) })
+          .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+          .then(function (res) {
+            if (!res.ok) throw new Error(res.d.error || '조회 중 오류가 발생했습니다.');
+            render(res.d);
+          })
+          .catch(function (e2) { err.textContent = e2.message; err.classList.add('show'); });
+      });
+
+      document.getElementById('replyBtn').addEventListener('click', function () {
+        var box = document.getElementById('replyBox');
+        var note = document.getElementById('replyMsg');
+        if (!box.value.trim()) { note.textContent = '내용을 입력하세요.'; return; }
+        fetch('/api/reports/message', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reportNo: curCode, password: curPw, body: box.value.trim() }) })
+          .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+          .then(function (res) {
+            if (!res.ok) throw new Error(res.d.error || '전송 실패');
+            box.value = ''; note.textContent = '전송되었습니다. 새로고침하여 조회하면 반영됩니다.';
+          })
+          .catch(function (e3) { note.textContent = e3.message; });
       });
     })();
   </script>

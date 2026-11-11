@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>관리자 콘솔 · 문경관광공사 익명신고센터</title>
+  <style>
+    :root{--forest:#1b4332;--forest2:#2d6a4f;--forest5:#40916c;--line:#e4e7eb;--ink:#1f2933;--soft:#52606d;--cream:#f6f7f5;--danger:#b4232a;}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--cream);color:var(--ink);line-height:1.6}
+    a{color:inherit}
+    .topbar{background:var(--forest);color:#fff;padding:14px 22px;display:flex;justify-content:space-between;align-items:center}
+    .topbar b{font-size:1.02rem}
+    .topbar .who{font-size:.85rem;color:rgba(255,255,255,.8);display:flex;gap:14px;align-items:center}
+    .topbar button{background:rgba(255,255,255,.15);color:#fff;border:0;padding:7px 14px;border-radius:8px;cursor:pointer;font-size:.85rem}
+    .wrap{max-width:1180px;margin:0 auto;padding:22px}
+
+    /* 로그인 */
+    .login{max-width:380px;margin:9vh auto;background:#fff;border:1px solid var(--line);border-radius:16px;padding:34px;box-shadow:0 12px 40px rgba(27,67,50,.12)}
+    .login h1{font-size:1.25rem;color:var(--forest);margin-bottom:6px}
+    .login p{font-size:.85rem;color:var(--soft);margin-bottom:22px}
+    label{display:block;font-weight:700;font-size:.85rem;margin:14px 0 6px;color:var(--forest)}
+    input,select,textarea{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;font-family:inherit;font-size:.95rem}
+    input:focus,select:focus,textarea:focus{outline:none;border-color:var(--forest5);box-shadow:0 0 0 3px rgba(64,145,108,.15)}
+    .btn{background:var(--forest2);color:#fff;border:0;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;width:100%;margin-top:20px;font-size:.95rem}
+    .btn:hover{background:var(--forest)}
+    .btn.sm{width:auto;padding:9px 16px;margin:0;font-size:.85rem}
+    .btn.ghost{background:#fff;color:var(--forest);border:1.5px solid var(--line)}
+    .err{background:#fdecec;border:1px solid #f3c2c2;color:var(--danger);padding:10px 12px;border-radius:9px;font-size:.85rem;margin-top:14px;display:none}
+    .err.show{display:block}
+
+    /* 목록 */
+    .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:12px;flex-wrap:wrap}
+    .toolbar h2{font-size:1.2rem;color:var(--forest)}
+    .filters{display:flex;gap:6px;flex-wrap:wrap}
+    .chip{padding:7px 13px;border:1.5px solid var(--line);border-radius:999px;background:#fff;font-size:.82rem;cursor:pointer;font-weight:600;color:var(--soft)}
+    .chip.active{background:var(--forest2);border-color:var(--forest2);color:#fff}
+    table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+    th,td{padding:13px 14px;text-align:left;font-size:.9rem;border-bottom:1px solid var(--line)}
+    th{background:#f0f3f0;color:var(--forest);font-size:.8rem}
+    tr:last-child td{border-bottom:0}
+    tr.row{cursor:pointer}
+    tr.row:hover{background:#f7faf8}
+    .badge{padding:4px 11px;border-radius:999px;font-size:.76rem;font-weight:700;white-space:nowrap}
+    .b-received{background:#e3effd;color:#1d4ed8}
+    .b-review{background:#fff3d6;color:#a16207}
+    .b-investigating{background:#ede9fe;color:#6d28d9}
+    .b-done{background:#d8f3dc;color:#2d6a4f}
+    .b-rejected{background:#f1f3f5;color:#52606d}
+    .muted{color:var(--soft);font-size:.82rem}
+    .empty{text-align:center;padding:50px;color:var(--soft)}
+
+    /* 상세 */
+    .detail{background:#fff;border:1px solid var(--line);border-radius:14px;padding:26px;margin-top:4px}
+    .detail .back{color:var(--forest5);font-size:.85rem;cursor:pointer;display:inline-block;margin-bottom:16px;font-weight:600}
+    .detail h2{font-size:1.25rem;color:var(--forest);margin-bottom:4px}
+    .meta{display:flex;gap:16px;flex-wrap:wrap;font-size:.82rem;color:var(--soft);margin-bottom:18px}
+    .content-box{background:var(--cream);border:1px solid var(--line);border-radius:10px;padding:16px;white-space:pre-wrap;font-size:.92rem;margin-bottom:20px}
+    .sec-title{font-weight:800;color:var(--forest);font-size:.95rem;margin:22px 0 10px}
+    .attach a{display:inline-block;background:#f0f3f0;border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:4px 6px 0 0;font-size:.85rem;color:var(--forest);text-decoration:none}
+    .msg{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:8px;font-size:.9rem}
+    .msg.admin{background:#eef5f0;border-color:#cfe6d8}
+    .msg.reporter{background:#fff}
+    .msg .who{font-size:.76rem;font-weight:700;margin-bottom:3px}
+    .msg.admin .who{color:var(--forest2)}
+    .msg.reporter .who{color:#1d4ed8}
+    .msg .at{font-size:.72rem;color:var(--soft);float:right}
+    .actions{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-top:8px;background:var(--cream);padding:16px;border-radius:10px}
+    .actions .f{flex:1;min-width:160px}
+    .hide{display:none}
+    .timeline{list-style:none;font-size:.85rem}
+    .timeline li{padding:4px 0 4px 16px;position:relative;color:var(--soft)}
+    .timeline li::before{content:'';position:absolute;left:0;top:11px;width:7px;height:7px;border-radius:50%;background:var(--forest5)}
+  </style>
+</head>
+<body>
+
+  <!-- 로그인 화면 -->
+  <div id="loginView">
+    <div class="login">
+      <h1>관리자 콘솔</h1>
+      <p>문경관광공사 공직비위 익명신고센터</p>
+      <form id="loginForm">
+        <label for="u">아이디</label>
+        <input id="u" autocomplete="username" required>
+        <label for="p">비밀번호</label>
+        <input id="p" type="password" autocomplete="current-password" required>
+        <button class="btn" type="submit">로그인</button>
+        <div class="err" id="loginErr"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 콘솔 -->
+  <div id="appView" class="hide">
+    <div class="topbar">
+      <b>🛡️ 익명신고 관리자 콘솔</b>
+      <div class="who"><span id="whoami"></span><button id="logoutBtn">로그아웃</button></div>
+    </div>
+    <div class="wrap">
+      <!-- 목록 -->
+      <div id="listView">
+        <div class="toolbar">
+          <h2>신고 목록</h2>
+          <div class="filters" id="filters">
+            <span class="chip active" data-s="">전체</span>
+            <span class="chip" data-s="received">접수완료</span>
+            <span class="chip" data-s="review">검토중</span>
+            <span class="chip" data-s="investigating">조사중</span>
+            <span class="chip" data-s="done">처리완료</span>
+            <span class="chip" data-s="rejected">종결</span>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>신고번호</th><th>유형</th><th>제목</th><th>상태</th><th>접수일</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <div class="empty hide" id="emptyMsg">표시할 신고가 없습니다.</div>
+      </div>
+
+      <!-- 상세 -->
+      <div id="detailView" class="hide"></div>
+    </div>
+  </div>
+
+  <script>
+  const api = (p, opt={}) => fetch('/api/admin'+p, {credentials:'same-origin', ...opt}).then(async r=>{
+    const data = await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(data.error || '오류가 발생했습니다.');
+    return data;
+  });
+  const esc = s => String(s??'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const el = id => document.getElementById(id);
+  const badge = (s,label) => `<span class="badge b-${s}">${esc(label)}</span>`;
+  const fmt = t => (t||'').replace('T',' ').slice(0,16);
+  let curFilter = '';
+
+  /* 로그인 */
+  el('loginForm').addEventListener('submit', async e=>{
+    e.preventDefault();
+    el('loginErr').classList.remove('show');
+    try{
+      const d = await api('/login',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({username:el('u').value,password:el('p').value})});
+      enterApp(d.username);
+    }catch(err){ el('loginErr').textContent=err.message; el('loginErr').classList.add('show'); }
+  });
+
+  el('logoutBtn').addEventListener('click', async ()=>{
+    await api('/logout',{method:'POST'}).catch(()=>{});
+    location.reload();
+  });
+
+  function enterApp(username){
+    el('whoami').textContent = username + ' 님';
+    el('loginView').classList.add('hide');
+    el('appView').classList.remove('hide');
+    loadList();
+  }
+
+  /* 필터 */
+  el('filters').addEventListener('click', e=>{
+    if(!e.target.classList.contains('chip')) return;
+    document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+    e.target.classList.add('active');
+    curFilter = e.target.dataset.s;
+    loadList();
+  });
+
+  async function loadList(){
+    showList();
+    const rows = await api('/reports'+(curFilter?`?status=${curFilter}`:''));
+    const tb = el('rows'); tb.innerHTML='';
+    el('emptyMsg').classList.toggle('hide', rows.length>0);
+    rows.forEach(r=>{
+      const tr=document.createElement('tr'); tr.className='row';
+      tr.innerHTML=`<td><b>${esc(r.reportNo)}</b></td><td>${esc(r.category)}</td>
+        <td>${esc(r.title)}</td><td>${badge(r.status,r.statusLabel)}</td><td class="muted">${fmt(r.createdAt)}</td>`;
+      tr.onclick=()=>openDetail(r.reportNo);
+      tb.appendChild(tr);
+    });
+  }
+
+  function showList(){ el('listView').classList.remove('hide'); el('detailView').classList.add('hide'); }
+
+  async function openDetail(no){
+    const d = await api('/reports/'+encodeURIComponent(no));
+    el('listView').classList.add('hide');
+    const v = el('detailView'); v.classList.remove('hide');
+    v.innerHTML = `
+      <div class="detail">
+        <span class="back" id="backBtn">← 목록으로</span>
+        <h2>${esc(d.title)}</h2>
+        <div class="meta">
+          <span><b>${esc(d.reportNo)}</b></span>
+          <span>유형: ${esc(d.category)}</span>
+          ${d.dept?`<span>대상소속: ${esc(d.dept)}</span>`:''}
+          ${d.occurredAt?`<span>발생시기: ${esc(d.occurredAt)}</span>`:''}
+          <span>접수: ${fmt(d.createdAt)}</span>
+          <span>${badge(d.status,d.statusLabel)}</span>
+        </div>
+        <div class="sec-title">신고 내용</div>
+        <div class="content-box">${esc(d.content)}</div>
+        ${d.attachments.length?`<div class="sec-title">증빙자료 (${d.attachments.length})</div>
+          <div class="attach">${d.attachments.map(a=>`<a href="/api/admin/attachments/${a.id}">📎 ${esc(a.filename)} (${Math.round((a.size||0)/1024)}KB)</a>`).join('')}</div>`:''}
+        <div class="sec-title">처리 이력</div>
+        <ul class="timeline">${d.timeline.map(t=>`<li>${esc(t.label)} · ${fmt(t.at)}</li>`).join('')}</ul>
+        <div class="sec-title">소통 메시지</div>
+        <div id="msgs">${d.messages.length?d.messages.map(m=>`
+          <div class="msg ${m.sender}"><div class="who">${m.sender==='admin'?'담당자':'신고자'}<span class="at">${fmt(m.at)}</span></div>${esc(m.body)}</div>
+        `).join(''):'<p class="muted">아직 메시지가 없습니다.</p>'}</div>
+        <div class="actions">
+          <div class="f">
+            <label>상태 변경</label>
+            <select id="newStatus">
+              <option value="">(변경 안 함)</option>
+              <option value="received">접수완료</option>
+              <option value="review">검토중</option>
+              <option value="investigating">조사중</option>
+              <option value="done">처리완료</option>
+              <option value="rejected">종결</option>
+            </select>
+          </div>
+          <div class="f" style="flex:2">
+            <label>담당자 메시지 (신고자에게 표시)</label>
+            <textarea id="adminMsg" rows="2" placeholder="추가 확인 요청·처리 안내 등"></textarea>
+          </div>
+          <button class="btn sm" id="saveBtn">저장</button>
+        </div>
+        <div class="err" id="detErr"></div>
+      </div>`;
+    el('backBtn').onclick = loadList;
+    el('saveBtn').onclick = async ()=>{
+      el('detErr').classList.remove('show');
+      try{
+        await api('/reports/'+encodeURIComponent(no),{method:'PATCH',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({status:el('newStatus').value||undefined, message:el('adminMsg').value||undefined})});
+        openDetail(no);
+      }catch(err){ el('detErr').textContent=err.message; el('detErr').classList.add('show'); }
+    };
+  }
+
+  /* 세션 복구 */
+  api('/me').then(d=>enterApp(d.username)).catch(()=>{});
+  </script>
+</body>
+</html>

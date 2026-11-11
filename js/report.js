@@ -1,10 +1,8 @@
 /* 신고 접수 폼 처리
  *
- * ⚠️ 데모/프론트엔드 구현 안내
- * 이 스크립트는 접수 UX를 보여주기 위한 클라이언트 측 데모입니다.
- * 실제 운영에서는 신고 내용이 반드시 서버로 전송되어 암호화 저장되어야 하며,
- * 신고번호·비밀번호 검증과 처리상태 관리는 백엔드에서 이루어져야 합니다.
- * (README의 "운영 배포 시 필수 구현" 항목 참고)
+ * 서버(/api/reports)로 신고를 전송하면 백엔드에서 내용·첨부를 암호화 저장하고
+ * 신고번호를 발급합니다. 서버 없이 정적 파일만 열어 본 경우에는 네트워크 오류가
+ * 발생하므로, server/ 를 실행한 상태에서 사용하세요.
  */
 (function () {
   'use strict';
@@ -55,16 +53,7 @@
     errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
-  // 신고번호 생성: MG-YYYY-XXXXXX (추적 불가한 난수)
-  function generateCode() {
-    var year = new Date().getFullYear();
-    var rand = '';
-    var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // 혼동되는 문자 제외
-    var buf = new Uint32Array(6);
-    (window.crypto || window.msCrypto).getRandomValues(buf);
-    for (var i = 0; i < 6; i++) rand += chars[buf[i] % chars.length];
-    return 'MG-' + year + '-' + rand;
-  }
+  var submitBtn = form.querySelector('button[type=submit]');
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -76,13 +65,28 @@
     if (document.getElementById('pw').value.length < 4) return showError('비밀번호를 4자 이상 설정해 주세요.');
     if (!document.getElementById('agree').checked) return showError('동의 항목에 체크해 주세요.');
 
-    // === 실제 운영 시: 여기서 fetch()로 서버에 암호화 전송 ===
-    // 데모에서는 신고번호만 발급하고 제출 화면을 전환합니다.
-    var code = generateCode();
-    outCode.textContent = code;
-    form.hidden = true;
-    receipt.hidden = false;
-    receipt.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    var fd = new FormData(form); // category, dept, title, occurredAt, content, pw, files
+    // 서버는 password 필드명을 사용하므로 pw 값을 매핑
+    fd.set('password', document.getElementById('pw').value);
+    fd.delete('pw');
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = '접수 중…';
+
+    fetch('/api/reports', { method: 'POST', body: fd })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+      .then(function (res) {
+        if (!res.ok) throw new Error(res.d.error || '접수 중 오류가 발생했습니다.');
+        outCode.textContent = res.d.reportNo;
+        form.hidden = true;
+        receipt.hidden = false;
+        receipt.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      })
+      .catch(function (err) {
+        showError(err.message + ' (서버가 실행 중인지 확인하세요.)');
+        submitBtn.disabled = false;
+        submitBtn.textContent = '익명으로 신고 접수';
+      });
   });
 
   if (copyBtn) {
