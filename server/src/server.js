@@ -68,6 +68,7 @@ app.use(cookieParser());
 app.use('/api/reports', reportRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/content', require('./routes/content'));
+app.use('/api/categories', require('./routes/categories'));
 
 // 사이트 편집용 업로드 이미지(공개)
 const { UPLOAD_DIR } = require('./db');

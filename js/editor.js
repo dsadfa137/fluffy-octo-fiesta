@@ -1,7 +1,8 @@
-/* 문경관광공사 익명신고센터 — 인라인 콘텐츠 편집(관리자)
- * - 모든 방문자: 저장된 콘텐츠 오버라이드([data-edit], [data-edit-img])를 적용
- * - 관리자(로그인 상태): 플로팅 '편집' 버튼 → 글자/이미지 직접 수정 → 저장
- * 텍스트는 언어별로, 이미지는 언어 무관으로 저장됩니다.
+/* 문경관광공사 익명신고센터 — 인라인 콘텐츠 편집
+ * - 모든 방문자: 저장된 콘텐츠 오버라이드([data-edit], [data-edit-img]) 적용
+ * - 편집 모드는 "공개 사이트"에는 노출되지 않음.
+ *   관리자 콘솔(/admin)의 '사이트 편집' 버튼으로 ?edit=1 로 열었을 때,
+ *   그 탭에서만(관리자 인증 확인 후) 편집 UI가 활성화됨. sessionStorage로 탭 내 유지.
  */
 (function () {
   'use strict';
@@ -23,29 +24,32 @@
       .catch(function () {});
   }
 
-  var editing = false, bar = null, fileInput = null;
+  var SKEY = 'mgtc_edit', fileInput = null;
+
+  function wantEdit() {
+    if (/[?&]edit=1(?![0-9])/.test(location.search)) return true;
+    try { return sessionStorage.getItem(SKEY) === '1'; } catch (e) { return false; }
+  }
 
   function start() {
     fetchApply();
     document.querySelectorAll('[data-lang]').forEach(function (b) {
       b.addEventListener('click', function () { setTimeout(fetchApply, 40); });
     });
-    // 관리자 여부 확인 → 편집 버튼
+
+    if (!wantEdit()) return; // 공개 사이트: 편집 UI 없음 (관리자 로그인 여부와 무관)
+
+    // 편집 의도가 있을 때만 관리자 인증 확인
     fetch('/api/admin/me', { credentials: 'same-origin' })
-      .then(function (r) { if (r.ok) addToggle(); })
+      .then(function (r) { return r.ok; })
+      .then(function (isAdmin) {
+        if (isAdmin) { try { sessionStorage.setItem(SKEY, '1'); } catch (e) {} startEditSession(); }
+        else { try { sessionStorage.removeItem(SKEY); } catch (e) {} }
+      })
       .catch(function () {});
   }
 
-  function addToggle() {
-    var btn = document.createElement('button');
-    btn.id = 'mgtc-edit-toggle'; btn.type = 'button'; btn.textContent = '✏️ 편집';
-    btn.addEventListener('click', function () { editing ? exitEdit(false) : enterEdit(); });
-    document.body.appendChild(btn);
-  }
-
-  function enterEdit() {
-    editing = true;
-    document.getElementById('mgtc-edit-toggle').textContent = '✕ 편집 종료';
+  function startEditSession() {
     document.querySelectorAll('[data-edit]').forEach(function (el) {
       el.dataset._orig = el.textContent;
       el.setAttribute('contenteditable', 'true');
@@ -68,14 +72,11 @@
 
   function imgClick(e) {
     e.preventDefault(); e.stopPropagation();
-    var img = e.currentTarget;
-    var key = img.getAttribute('data-edit-img');
-    var fi = ensureFileInput();
-    fi.value = '';
+    var img = e.currentTarget, key = img.getAttribute('data-edit-img');
+    var fi = ensureFileInput(); fi.value = '';
     fi.onchange = function () {
       if (!fi.files.length) return;
-      var fd = new FormData();
-      fd.append('image', fi.files[0]); fd.append('key', key);
+      var fd = new FormData(); fd.append('image', fi.files[0]); fd.append('key', key);
       status('이미지 업로드 중…');
       fetch('/api/content/image', { method: 'POST', body: fd, credentials: 'same-origin' })
         .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
@@ -90,24 +91,25 @@
   }
 
   function showBar() {
-    bar = document.createElement('div');
+    var bar = document.createElement('div');
     bar.id = 'mgtc-edit-bar';
     bar.innerHTML =
-      '<span class="mgtc-bar-info">편집 모드 · 언어 ' + lang().toUpperCase() + '</span>' +
+      '<span class="mgtc-bar-info">✏️ 편집 모드 · 언어 ' + lang().toUpperCase() + '</span>' +
       '<span class="mgtc-bar-status" id="mgtc-bar-status"></span>' +
-      '<button type="button" id="mgtc-cancel">취소</button>' +
-      '<button type="button" id="mgtc-save">저장</button>';
+      '<button type="button" id="mgtc-revert">변경취소</button>' +
+      '<button type="button" id="mgtc-save">저장</button>' +
+      '<button type="button" id="mgtc-exit">편집 종료</button>';
     document.body.appendChild(bar);
     document.getElementById('mgtc-save').addEventListener('click', save);
-    document.getElementById('mgtc-cancel').addEventListener('click', function () { exitEdit(false); });
+    document.getElementById('mgtc-revert').addEventListener('click', revert);
+    document.getElementById('mgtc-exit').addEventListener('click', exitSession);
   }
   function status(m) { var s = document.getElementById('mgtc-bar-status'); if (s) s.textContent = m; }
 
   function save() {
     var updates = {};
     document.querySelectorAll('[data-edit]').forEach(function (el) {
-      var cur = el.textContent;
-      if (cur !== el.dataset._orig) updates[el.getAttribute('data-edit')] = cur;
+      if (el.textContent !== el.dataset._orig) updates[el.getAttribute('data-edit')] = el.textContent;
     });
     if (Object.keys(updates).length === 0) { status('변경된 글자가 없습니다.'); return; }
     status('저장 중…');
@@ -118,24 +120,22 @@
       .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
       .then(function (res) {
         if (!res.ok) throw new Error(res.d.error || '저장 실패');
-        status('저장되었습니다 ✓'); exitEdit(true);
+        document.querySelectorAll('[data-edit]').forEach(function (el) { el.dataset._orig = el.textContent; });
+        status('저장되었습니다 ✓ (방문자에게 반영됨)');
       })
       .catch(function (err) { status('오류: ' + err.message); });
   }
 
-  function exitEdit(saved) {
-    editing = false;
-    var tgl = document.getElementById('mgtc-edit-toggle'); if (tgl) tgl.textContent = '✏️ 편집';
+  function revert() {
     document.querySelectorAll('[data-edit]').forEach(function (el) {
-      el.removeAttribute('contenteditable'); el.classList.remove('mgtc-editable');
-      if (!saved && el.dataset._orig != null) el.textContent = el.dataset._orig;
-      delete el.dataset._orig;
+      if (el.dataset._orig != null) el.textContent = el.dataset._orig;
     });
-    document.querySelectorAll('[data-edit-img]').forEach(function (el) {
-      el.classList.remove('mgtc-editable-img'); el.removeEventListener('click', imgClick);
-    });
-    if (bar) { bar.remove(); bar = null; }
-    if (saved) fetchApply();
+    status('변경을 되돌렸습니다(저장 전 상태).');
+  }
+
+  function exitSession() {
+    try { sessionStorage.removeItem(SKEY); } catch (e) {}
+    location.href = location.pathname; // 쿼리 제거 + 깨끗한 공개 화면으로
   }
 
   if (document.readyState !== 'loading') setTimeout(start, 0);

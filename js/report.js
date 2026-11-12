@@ -10,8 +10,32 @@
   var form = document.getElementById('reportForm');
   if (!form) return;
 
+  var categorySel = document.getElementById('category');
   var content = document.getElementById('content');
   var contentCount = document.getElementById('contentCount');
+
+  // 신고유형을 서버에서 불러와 채움(관리자가 추가/삭제 가능). 언어 전환 시 라벨 갱신.
+  function loadCategories() {
+    var cl = (window.MGTC_I18N && window.MGTC_I18N.lang && window.MGTC_I18N.lang()) || 'ko';
+    var prev = categorySel.value;
+    fetch('/api/categories?lang=' + encodeURIComponent(cl))
+      .then(function (r) { return r.ok ? r.json() : []; })
+      .then(function (list) {
+        // 첫 번째(플레이스홀더) 옵션만 남기고 교체
+        while (categorySel.options.length > 1) categorySel.remove(1);
+        list.forEach(function (c) {
+          var o = document.createElement('option');
+          o.value = c.value; o.textContent = c.label;
+          categorySel.appendChild(o);
+        });
+        if (prev) categorySel.value = prev; // 선택값 유지(값은 언어 무관으로 고정)
+      })
+      .catch(function () {});
+  }
+  loadCategories();
+  document.querySelectorAll('[data-lang]').forEach(function (b) {
+    b.addEventListener('click', function () { setTimeout(loadCategories, 40); });
+  });
   var fileInput = document.getElementById('files');
   var filePick = document.getElementById('filePick');
   var fileDrop = document.getElementById('fileDrop');

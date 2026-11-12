@@ -577,6 +577,8 @@ section.block { padding: 90px 0; }
 #mgtc-edit-bar .mgtc-bar-info { font-weight: 700; white-space: nowrap; }
 #mgtc-edit-bar .mgtc-bar-status { color: #9bd6f7; font-size: .84rem; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 #mgtc-edit-bar button { border: 0; border-radius: 9px; padding: 9px 16px; font-weight: 800; font-size: .86rem; cursor: pointer; }
-#mgtc-cancel { background: rgba(255,255,255,.16); color: #fff; }
+#mgtc-revert { background: rgba(255,255,255,.16); color: #fff; }
+#mgtc-exit { background: rgba(255,255,255,.16); color: #fff; }
 #mgtc-save { background: var(--gold); color: #fff; }
 #mgtc-save:hover { background: var(--gold-dark); }
+#mgtc-revert:hover, #mgtc-exit:hover { background: rgba(255,255,255,.28); }

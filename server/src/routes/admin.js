@@ -115,4 +115,32 @@ router.get('/attachments/:id', requireAdmin, (req, res) => {
   res.send(plain);
 });
 
+/* ---------- 신고유형 관리 ---------- */
+router.get('/categories', requireAdmin, (req, res) => {
+  const rows = db.prepare('SELECT id, cvalue, label_ko, label_en, sort FROM categories ORDER BY sort, id').all();
+  res.json(rows);
+});
+
+router.post('/categories', requireAdmin, (req, res) => {
+  const label_ko = String((req.body && req.body.label_ko) || '').trim();
+  const label_en = String((req.body && req.body.label_en) || '').trim();
+  if (!label_ko) return res.status(400).json({ error: '한국어 명칭을 입력하세요.' });
+  if (label_ko.length > 60) return res.status(400).json({ error: '명칭이 너무 깁니다(60자 이하).' });
+
+  const value = label_ko; // 저장값은 한국어 명칭으로 고정
+  const dup = db.prepare('SELECT 1 FROM categories WHERE cvalue = ?').get(value);
+  if (dup) return res.status(409).json({ error: '이미 존재하는 유형입니다.' });
+
+  const maxSort = db.prepare('SELECT COALESCE(MAX(sort), -1) AS m FROM categories').get().m;
+  const info = db.prepare('INSERT INTO categories (cvalue, label_ko, label_en, sort) VALUES (?, ?, ?, ?)')
+    .run(value, label_ko, label_en || null, maxSort + 1);
+  res.status(201).json({ ok: true, id: info.lastInsertRowid });
+});
+
+router.delete('/categories/:id', requireAdmin, (req, res) => {
+  const info = db.prepare('DELETE FROM categories WHERE id = ?').run(Number(req.params.id));
+  if (!info.changes) return res.status(404).json({ error: '유형을 찾을 수 없습니다.' });
+  res.json({ ok: true });
+});
+
 module.exports = router;

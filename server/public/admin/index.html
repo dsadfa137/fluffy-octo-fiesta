@@ -97,7 +97,12 @@
   <div id="appView" class="hide">
     <div class="topbar">
       <b>🛡️ 익명신고 관리자 콘솔</b>
-      <div class="who"><span id="whoami"></span><button id="logoutBtn">로그아웃</button></div>
+      <div class="who">
+        <span id="whoami"></span>
+        <button id="catBtn" type="button">🏷️ 신고유형 관리</button>
+        <a id="siteEditBtn" href="/?edit=1" target="_blank" rel="noopener" style="background:rgba(255,255,255,.15);color:#fff;padding:7px 14px;border-radius:8px;font-size:.85rem;text-decoration:none">🖊️ 사이트 편집</a>
+        <button id="logoutBtn">로그아웃</button>
+      </div>
     </div>
     <div class="wrap">
       <!-- 목록 -->
@@ -122,6 +127,29 @@
 
       <!-- 상세 -->
       <div id="detailView" class="hide"></div>
+
+      <!-- 신고유형 관리 -->
+      <div id="categoryView" class="hide">
+        <div class="toolbar">
+          <h2>신고유형 관리</h2>
+          <button class="btn sm ghost" id="catBack" type="button">← 신고 목록으로</button>
+        </div>
+        <div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:18px">
+          <div style="font-weight:800;color:var(--forest);margin-bottom:12px">새 유형 추가</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+            <div style="flex:1;min-width:180px"><label style="margin-top:0">한국어 명칭<span style="color:var(--danger)">*</span></label><input id="catKo" placeholder="예: 성희롱·성비위"></div>
+            <div style="flex:1;min-width:180px"><label style="margin-top:0">영어 명칭(선택)</label><input id="catEn" placeholder="e.g., Sexual misconduct"></div>
+            <button class="btn sm" id="catAdd" type="button" style="margin:0">추가</button>
+          </div>
+          <div class="err" id="catErr"></div>
+          <p class="muted" style="margin-top:10px">※ 추가/삭제는 신고 접수 화면의 '신고 유형' 목록에 즉시 반영됩니다. 삭제해도 이미 접수된 신고의 유형 값은 보존됩니다.</p>
+        </div>
+        <table>
+          <thead><tr><th>순서</th><th>한국어</th><th>영어</th><th style="width:90px">삭제</th></tr></thead>
+          <tbody id="catRows"></tbody>
+        </table>
+        <div class="empty hide" id="catEmpty">등록된 신고유형이 없습니다. 위에서 추가하세요.</div>
+      </div>
     </div>
   </div>
 
@@ -153,6 +181,50 @@
     location.reload();
   });
 
+  /* ── 신고유형 관리 ── */
+  el('catBtn').addEventListener('click', showCategories);
+  el('catBack').addEventListener('click', loadList);
+  el('catAdd').addEventListener('click', addCategory);
+
+  function showCategories(){
+    el('listView').classList.add('hide');
+    el('detailView').classList.add('hide');
+    el('categoryView').classList.remove('hide');
+    loadCategories();
+  }
+
+  async function loadCategories(){
+    const cats = await api('/categories');
+    const tb = el('catRows'); tb.innerHTML='';
+    el('catEmpty').classList.toggle('hide', cats.length>0);
+    cats.forEach((c,i)=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td class="muted">${i+1}</td><td><b>${esc(c.label_ko)}</b></td>`+
+        `<td class="muted">${esc(c.label_en||'')}</td>`+
+        `<td><button class="btn sm ghost" style="color:var(--danger);border-color:#f3c2c2" data-id="${c.id}">삭제</button></td>`;
+      tr.querySelector('button').onclick=()=>deleteCategory(c.id, c.label_ko);
+      tb.appendChild(tr);
+    });
+  }
+
+  async function addCategory(){
+    el('catErr').classList.remove('show');
+    const ko = el('catKo').value.trim(), en = el('catEn').value.trim();
+    if(!ko){ el('catErr').textContent='한국어 명칭을 입력하세요.'; el('catErr').classList.add('show'); return; }
+    try{
+      await api('/categories',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({label_ko:ko, label_en:en})});
+      el('catKo').value=''; el('catEn').value='';
+      loadCategories();
+    }catch(err){ el('catErr').textContent=err.message; el('catErr').classList.add('show'); }
+  }
+
+  async function deleteCategory(id, label){
+    if(!confirm(`'${label}' 유형을 삭제할까요?\n(신고 접수 목록에서 사라집니다. 기존 신고 데이터는 유지됩니다.)`)) return;
+    try{ await api('/categories/'+id,{method:'DELETE'}); loadCategories(); }
+    catch(err){ alert(err.message); }
+  }
+
   function enterApp(username){
     el('whoami').textContent = username + ' 님';
     el('loginView').classList.add('hide');
@@ -183,7 +255,7 @@
     });
   }
 
-  function showList(){ el('listView').classList.remove('hide'); el('detailView').classList.add('hide'); }
+  function showList(){ el('listView').classList.remove('hide'); el('detailView').classList.add('hide'); el('categoryView').classList.add('hide'); }
 
   async function openDetail(no){
     const d = await api('/reports/'+encodeURIComponent(no));

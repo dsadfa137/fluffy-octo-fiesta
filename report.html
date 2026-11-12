@@ -60,13 +60,7 @@
             <label for="category" data-i18n="lbl_category">신고 유형<span class="req">*</span></label>
             <select id="category" name="category" required>
               <option value="" data-i18n="opt_select">유형을 선택하세요</option>
-              <option value="금품·향응 수수" data-i18n="cat1">금품·향응 수수</option>
-              <option value="예산·계약 부정" data-i18n="cat2">예산·계약 부정</option>
-              <option value="갑질·직장 내 괴롭힘" data-i18n="cat3">갑질·직장 내 괴롭힘</option>
-              <option value="이해충돌" data-i18n="cat4">이해충돌</option>
-              <option value="채용·인사 비리" data-i18n="cat5">채용·인사 비리</option>
-              <option value="공용물·정보 유용" data-i18n="cat6">공용물·정보 유용</option>
-              <option value="기타 공직비위" data-i18n="cat7">기타 공직비위</option>
+              <!-- 신고유형은 서버(/api/categories)에서 동적으로 채워집니다(관리자가 추가/삭제) -->
             </select>
           </div>
 

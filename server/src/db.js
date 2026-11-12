@@ -68,8 +68,35 @@ CREATE TABLE IF NOT EXISTS content (
   PRIMARY KEY (key, lang)
 );
 
+CREATE TABLE IF NOT EXISTS categories (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  cvalue     TEXT UNIQUE NOT NULL,   -- 신고 저장값(한국어 고정)
+  label_ko   TEXT NOT NULL,
+  label_en   TEXT,
+  sort       INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 CREATE INDEX IF NOT EXISTS idx_reports_no ON reports(report_no);
 CREATE INDEX IF NOT EXISTS idx_messages_report ON messages(report_id);
 `);
+
+// 기본 신고유형 시드 (최초 1회, 비어 있을 때만)
+(function seedCategories() {
+  const n = db.prepare('SELECT COUNT(*) AS c FROM categories').get().c;
+  if (n > 0) return;
+  const defaults = [
+    ['금품·향응 수수', 'Bribery & entertainment'],
+    ['예산·계약 부정', 'Budget & contract fraud'],
+    ['갑질·직장 내 괴롭힘', 'Abuse of power & harassment'],
+    ['이해충돌', 'Conflict of interest'],
+    ['채용·인사 비리', 'Hiring & HR corruption'],
+    ['공용물·정보 유용', 'Misuse of public assets/info'],
+    ['기타 공직비위', 'Other misconduct'],
+  ];
+  const ins = db.prepare('INSERT INTO categories (cvalue, label_ko, label_en, sort) VALUES (?, ?, ?, ?)');
+  const tx = db.transaction(() => { defaults.forEach((d, i) => ins.run(d[0], d[0], d[1], i)); });
+  tx();
+})();
 
 module.exports = { db, DATA_DIR, ATTACH_DIR, UPLOAD_DIR };
