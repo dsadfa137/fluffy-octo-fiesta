@@ -8,23 +8,29 @@
   <meta name="description" content="문경관광공사 공직비위 익명신고 접수. 실명 없이 안전하게 제보하세요.">
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-  <a href="#main" class="skip-link">본문 바로가기</a>
+<body data-page="report">
+  <a href="#main" class="skip-link" data-i18n="skip">본문 바로가기</a>
 
   <header class="site-header">
     <div class="container inner">
       <a class="brand" href="index.html" aria-label="홈">
         <img class="logo-img" src="assets/logo.png" alt="문경관광공사">
         <span class="divider"></span>
-        <span class="brand-text"><b>공직비위 익명신고센터</b><span>Anonymous Report Center</span></span>
+        <span class="brand-text"><b data-i18n="brand_main">공직비위 익명신고센터</b><span data-i18n="brand_sub">Anonymous Report Center</span></span>
       </a>
-      <button type="button" class="nav-toggle" aria-label="메뉴 열기" aria-expanded="false" aria-controls="main-navigation"><span></span><span></span><span></span></button>
+      <button type="button" class="nav-toggle" aria-label="메뉴 열기" data-i18n-al="menu_open" aria-expanded="false" aria-controls="main-navigation"><span></span><span></span><span></span></button>
       <nav id="main-navigation" class="site-nav" aria-label="주 메뉴">
         <ul>
-          <li><a href="index.html">센터 안내</a></li>
-          <li><a href="report.html" class="active" aria-current="page">신고하기</a></li>
-          <li><a href="result.html">결과확인</a></li>
-          <li><a href="faq.html">자주 묻는 질문</a></li>
+          <li><a href="index.html" data-i18n="nav_about">센터 안내</a></li>
+          <li><a href="report.html" class="active" aria-current="page" data-i18n="nav_report">신고하기</a></li>
+          <li><a href="result.html" data-i18n="nav_result">결과확인</a></li>
+          <li><a href="faq.html" data-i18n="nav_faq">자주 묻는 질문</a></li>
+          <li class="lang-li">
+            <div class="lang-switch" role="group" aria-label="언어 선택" data-i18n-al="lang_aria">
+              <button type="button" data-lang="ko">KO</button>
+              <button type="button" data-lang="en">EN</button>
+            </div>
+          </li>
         </ul>
       </nav>
     </div>
@@ -33,9 +39,9 @@
   <main id="main">
     <section class="page-head">
       <div class="container">
-        <div class="breadcrumb"><a href="index.html">홈</a> › 신고하기</div>
-        <h1>공직비위 신고 접수</h1>
-        <p>실명을 적지 않으셔도 됩니다. 사실에 근거하여 구체적으로 작성해 주세요.</p>
+        <div class="breadcrumb"><a href="index.html" data-i18n="bc_home">홈</a> › <span data-i18n="nav_report">신고하기</span></div>
+        <h1 data-i18n="page_report_h">공직비위 신고 접수</h1>
+        <p data-i18n="page_report_p">실명을 적지 않으셔도 됩니다. 사실에 근거하여 구체적으로 작성해 주세요.</p>
       </div>
     </section>
 
@@ -43,7 +49,7 @@
       <div class="form-card">
         <div class="notice">
           <span class="ic">🔒</span>
-          <div>본 시스템은 접속 IP와 단말기 정보를 수집·저장하지 않습니다.
+          <div data-i18n-html="rep_notice">본 시스템은 접속 IP와 단말기 정보를 수집·저장하지 않습니다.
           접수 완료 시 <b>신고번호</b>와 <b>비밀번호</b>가 발급되며, 이 정보로만 처리결과를 확인할 수 있으니 반드시 안전하게 보관하세요.</div>
         </div>
 
@@ -51,83 +57,83 @@
 
         <form id="reportForm" novalidate>
           <div class="field">
-            <label for="category">신고 유형<span class="req">*</span></label>
+            <label for="category" data-i18n="lbl_category">신고 유형<span class="req">*</span></label>
             <select id="category" name="category" required>
-              <option value="">유형을 선택하세요</option>
-              <option>금품·향응 수수</option>
-              <option>예산·계약 부정</option>
-              <option>갑질·직장 내 괴롭힘</option>
-              <option>이해충돌</option>
-              <option>채용·인사 비리</option>
-              <option>공용물·정보 유용</option>
-              <option>기타 공직비위</option>
+              <option value="" data-i18n="opt_select">유형을 선택하세요</option>
+              <option value="금품·향응 수수" data-i18n="cat1">금품·향응 수수</option>
+              <option value="예산·계약 부정" data-i18n="cat2">예산·계약 부정</option>
+              <option value="갑질·직장 내 괴롭힘" data-i18n="cat3">갑질·직장 내 괴롭힘</option>
+              <option value="이해충돌" data-i18n="cat4">이해충돌</option>
+              <option value="채용·인사 비리" data-i18n="cat5">채용·인사 비리</option>
+              <option value="공용물·정보 유용" data-i18n="cat6">공용물·정보 유용</option>
+              <option value="기타 공직비위" data-i18n="cat7">기타 공직비위</option>
             </select>
           </div>
 
           <div class="field">
-            <label for="dept">신고 대상 소속(선택)</label>
-            <input type="text" id="dept" name="dept" placeholder="예: ○○사업부 / 정확히 모르면 비워두세요">
+            <label for="dept" data-i18n="lbl_dept">신고 대상 소속(선택)</label>
+            <input type="text" id="dept" name="dept" data-i18n-ph="ph_dept" placeholder="예: ○○사업부 / 정확히 모르면 비워두세요">
           </div>
 
           <div class="field">
-            <label for="title">제목<span class="req">*</span></label>
-            <input type="text" id="title" name="title" maxlength="80" required placeholder="신고 내용을 한 줄로 요약해 주세요">
+            <label for="title" data-i18n="lbl_title">제목<span class="req">*</span></label>
+            <input type="text" id="title" name="title" maxlength="80" required data-i18n-ph="ph_title" placeholder="신고 내용을 한 줄로 요약해 주세요">
           </div>
 
           <div class="field">
-            <label for="occurredAt">발생 시기(선택)</label>
+            <label for="occurredAt" data-i18n="lbl_occurred">발생 시기(선택)</label>
             <input type="date" id="occurredAt" name="occurredAt">
-            <p class="hint">정확한 날짜를 모르면 대략적인 시기만 본문에 적으셔도 됩니다.</p>
+            <p class="hint" data-i18n="hint_occurred">정확한 날짜를 모르면 대략적인 시기만 본문에 적으셔도 됩니다.</p>
           </div>
 
           <div class="field">
-            <label for="content">신고 내용<span class="req">*</span></label>
-            <textarea id="content" name="content" maxlength="4000" required
+            <label for="content" data-i18n="lbl_content">신고 내용<span class="req">*</span></label>
+            <textarea id="content" name="content" maxlength="4000" required data-i18n-ph="ph_content"
               placeholder="누가(직위), 언제, 어디서, 무엇을, 어떻게 했는지 육하원칙에 따라 구체적으로 작성해 주세요. 추측보다 확인된 사실 위주로 적어 주시면 조사에 큰 도움이 됩니다."></textarea>
-            <div class="counter" aria-live="off"><span id="contentCount">0</span> / 4000자</div>
+            <div class="counter" aria-live="off"><span id="contentCount">0</span> <span data-i18n="counter_suffix">/ 4000자</span></div>
           </div>
 
           <div class="field">
-            <label for="files">증빙자료 첨부(선택)</label>
+            <label for="files" data-i18n="lbl_files">증빙자료 첨부(선택)</label>
             <div class="file-drop" id="fileDrop">
               <input type="file" id="files" name="files" multiple>
-              파일을 끌어다 놓거나 <button type="button" class="pick" id="filePick">여기를 클릭</button>해 선택하세요.<br>
-              <small>문서·이미지·영상 등 (개별 20MB 이하)</small>
+              <span data-i18n="file_dnd1">파일을 끌어다 놓거나 </span><button type="button" class="pick" id="filePick" data-i18n="file_pick">여기를 클릭</button><span data-i18n="file_dnd2">해 선택하세요.</span><br>
+              <small data-i18n="file_small">문서·이미지·영상 등 (개별 20MB 이하)</small>
               <div class="file-list" id="fileList"></div>
             </div>
-            <p class="hint">파일에 포함된 이름·사번 등 신고자를 특정할 수 있는 정보는 미리 제거하는 것을 권장합니다.</p>
+            <p class="hint" data-i18n="hint_files">파일에 포함된 이름·사번 등 신고자를 특정할 수 있는 정보는 미리 제거하는 것을 권장합니다.</p>
           </div>
 
           <hr style="border:0;border-top:1px solid var(--line);margin:28px 0;">
 
           <div class="field">
-            <label for="pw">신고 비밀번호 설정<span class="req">*</span></label>
-            <input type="password" id="pw" name="pw" minlength="4" required placeholder="결과 확인 시 사용할 비밀번호(4자 이상)">
-            <p class="hint">신고번호와 함께 처리결과 확인에 사용됩니다. 분실 시 복구가 불가능합니다.</p>
+            <label for="pw" data-i18n="lbl_pw">신고 비밀번호 설정<span class="req">*</span></label>
+            <input type="password" id="pw" name="pw" minlength="4" required data-i18n-ph="ph_pw" placeholder="결과 확인 시 사용할 비밀번호(4자 이상)">
+            <p class="hint" data-i18n="hint_pw">신고번호와 함께 처리결과 확인에 사용됩니다. 분실 시 복구가 불가능합니다.</p>
           </div>
 
           <div class="consent">
             <input type="checkbox" id="agree" required>
-            <label for="agree">위 내용은 사실이며, 허위·비방 목적의 신고는 관련 법령에 따라 보호받지 못할 수 있음을 이해하고 동의합니다.</label>
+            <label for="agree" data-i18n="consent">위 내용은 사실이며, 허위·비방 목적의 신고는 관련 법령에 따라 보호받지 못할 수 있음을 이해하고 동의합니다.</label>
           </div>
 
-          <button type="submit" class="btn btn-primary btn-block btn-lg">익명으로 신고 접수</button>
+          <button type="submit" class="btn btn-primary btn-block btn-lg" data-i18n="submit_report">익명으로 신고 접수</button>
         </form>
 
         <!-- 접수 완료 결과 (숨김) -->
         <div id="receipt" hidden>
           <div class="section-head" style="margin-bottom:16px;">
-            <h2 style="font-size:1.4rem;">✅ 신고가 접수되었습니다</h2>
-            <p>아래 정보를 반드시 저장하세요. 다시 표시되지 않습니다.</p>
+            <h2 style="font-size:1.4rem;" data-i18n="receipt_h">✅ 신고가 접수되었습니다</h2>
+            <p data-i18n="receipt_p">아래 정보를 반드시 저장하세요. 다시 표시되지 않습니다.</p>
           </div>
           <div class="code-box">
-            <div class="label">신고번호</div>
+            <div class="label" data-i18n="code_label">신고번호</div>
             <div class="code" id="outCode">—</div>
-            <div class="warn">⚠️ 이 번호와 설정하신 비밀번호로만 결과를 확인할 수 있습니다.</div>
+            <div class="warn" data-i18n="code_warn">⚠️ 이 번호와 설정하신 비밀번호로만 결과를 확인할 수 있습니다.</div>
           </div>
           <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;">
-            <button class="btn btn-ghost" style="background:var(--forest-100);color:var(--forest-900);border:0;" id="copyBtn">신고번호 복사</button>
-            <a href="result.html" class="btn btn-primary">결과확인으로 이동</a>
+            <button class="btn btn-ghost" style="background:var(--forest-100);color:var(--forest-900);border:0;" id="copyBtn" data-i18n="btn_copy">신고번호 복사</button>
+            <a href="result.html" class="btn btn-primary" data-i18n="btn_go_result">결과확인으로 이동</a>
           </div>
         </div>
       </div>
@@ -136,10 +142,11 @@
 
   <footer class="site-footer">
     <div class="container">
-      <div class="copy">© <span data-year></span> 문경관광공사 공직비위 익명신고센터</div>
+      <div class="copy">© <span data-year></span> <span data-i18n="f_copy_simple">문경관광공사 공직비위 익명신고센터</span></div>
     </div>
   </footer>
 
+  <script src="js/i18n.js"></script>
   <script src="js/common.js"></script>
   <script src="js/report.js"></script>
 </body>

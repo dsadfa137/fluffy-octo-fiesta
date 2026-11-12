@@ -47,6 +47,11 @@
     });
   });
 
+  // 다국어 헬퍼 (i18n 미로드 시 한국어 기본값 사용)
+  function t(key, fallback) {
+    return (window.MGTC_I18N && window.MGTC_I18N.t) ? window.MGTC_I18N.t(key) : fallback;
+  }
+
   function showError(msg) {
     errorBox.textContent = msg;
     errorBox.classList.add('show');
@@ -59,11 +64,11 @@
     e.preventDefault();
     errorBox.classList.remove('show');
 
-    if (!document.getElementById('category').value) return showError('신고 유형을 선택해 주세요.');
-    if (!document.getElementById('title').value.trim()) return showError('제목을 입력해 주세요.');
-    if (content.value.trim().length < 20) return showError('신고 내용을 20자 이상 구체적으로 작성해 주세요.');
-    if (document.getElementById('pw').value.length < 4) return showError('비밀번호를 4자 이상 설정해 주세요.');
-    if (!document.getElementById('agree').checked) return showError('동의 항목에 체크해 주세요.');
+    if (!document.getElementById('category').value) return showError(t('err_category', '신고 유형을 선택해 주세요.'));
+    if (!document.getElementById('title').value.trim()) return showError(t('err_title', '제목을 입력해 주세요.'));
+    if (content.value.trim().length < 20) return showError(t('err_content', '신고 내용을 20자 이상 구체적으로 작성해 주세요.'));
+    if (document.getElementById('pw').value.length < 4) return showError(t('err_pw', '비밀번호를 4자 이상 설정해 주세요.'));
+    if (!document.getElementById('agree').checked) return showError(t('err_agree', '동의 항목에 체크해 주세요.'));
 
     var fd = new FormData(form); // category, dept, title, occurredAt, content, pw, files
     // 서버는 password 필드명을 사용하므로 pw 값을 매핑
@@ -71,21 +76,21 @@
     fd.delete('pw');
 
     submitBtn.disabled = true;
-    submitBtn.textContent = '접수 중…';
+    submitBtn.textContent = t('submitting', '접수 중…');
 
     fetch('/api/reports', { method: 'POST', body: fd })
       .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
       .then(function (res) {
-        if (!res.ok) throw new Error(res.d.error || '접수 중 오류가 발생했습니다.');
+        if (!res.ok) throw new Error(res.d.error || t('submit_err', '접수 중 오류가 발생했습니다.'));
         outCode.textContent = res.d.reportNo;
         form.hidden = true;
         receipt.hidden = false;
         receipt.scrollIntoView({ behavior: 'smooth', block: 'start' });
       })
       .catch(function (err) {
-        showError(err.message + ' (서버가 실행 중인지 확인하세요.)');
+        showError(err.message + t('submit_fail_suffix', ' (서버가 실행 중인지 확인하세요.)'));
         submitBtn.disabled = false;
-        submitBtn.textContent = '익명으로 신고 접수';
+        submitBtn.textContent = t('submit_report', '익명으로 신고 접수');
       });
   });
 
@@ -94,8 +99,8 @@
       var text = outCode.textContent;
       if (navigator.clipboard) {
         navigator.clipboard.writeText(text).then(function () {
-          copyBtn.textContent = '복사됨 ✓';
-          setTimeout(function () { copyBtn.textContent = '신고번호 복사'; }, 1800);
+          copyBtn.textContent = t('copied', '복사됨 ✓');
+          setTimeout(function () { copyBtn.textContent = t('btn_copy', '신고번호 복사'); }, 1800);
         });
       }
     });

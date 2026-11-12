@@ -532,3 +532,22 @@ section.block { padding: 90px 0; }
 @media (prefers-reduced-motion: reduce) {
  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
+
+/* ---------- 다국어 전환(KO/EN) ---------- */
+.lang-switch {
+  display: inline-flex; align-items: center;
+  border: 1.5px solid var(--line); border-radius: 999px; overflow: hidden; background: #fff;
+}
+.lang-switch button {
+  border: 0; background: none; padding: 7px 13px; min-height: 36px;
+  font-size: .8rem; font-weight: 800; letter-spacing: .02em; color: var(--ink-soft); cursor: pointer;
+  transition: background-color .15s, color .15s;
+}
+.lang-switch button + button { border-left: 1.5px solid var(--line); }
+.lang-switch button.active { background: var(--forest-700); color: #fff; }
+.lang-switch button:not(.active):hover { background: var(--forest-100); color: var(--forest-900); }
+.lang-li { display: flex; align-items: center; }
+@media (max-width: 1050px) {
+  .lang-li { padding: 10px 14px 4px; }
+  .lang-switch { width: max-content; }
+}

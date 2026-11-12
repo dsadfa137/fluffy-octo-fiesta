@@ -8,23 +8,29 @@
   <meta name="description" content="익명성 보장, 신고 범위, 처리 절차 등 자주 묻는 질문을 안내합니다.">
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-  <a href="#main" class="skip-link">본문 바로가기</a>
+<body data-page="faq">
+  <a href="#main" class="skip-link" data-i18n="skip">본문 바로가기</a>
 
   <header class="site-header">
     <div class="container inner">
       <a class="brand" href="index.html" aria-label="홈">
         <img class="logo-img" src="assets/logo.png" alt="문경관광공사">
         <span class="divider"></span>
-        <span class="brand-text"><b>공직비위 익명신고센터</b><span>Anonymous Report Center</span></span>
+        <span class="brand-text"><b data-i18n="brand_main">공직비위 익명신고센터</b><span data-i18n="brand_sub">Anonymous Report Center</span></span>
       </a>
-      <button type="button" class="nav-toggle" aria-label="메뉴 열기" aria-expanded="false" aria-controls="main-navigation"><span></span><span></span><span></span></button>
+      <button type="button" class="nav-toggle" aria-label="메뉴 열기" data-i18n-al="menu_open" aria-expanded="false" aria-controls="main-navigation"><span></span><span></span><span></span></button>
       <nav id="main-navigation" class="site-nav" aria-label="주 메뉴">
         <ul>
-          <li><a href="index.html">센터 안내</a></li>
-          <li><a href="report.html">신고하기</a></li>
-          <li><a href="result.html">결과확인</a></li>
-          <li><a href="faq.html" class="active" aria-current="page">자주 묻는 질문</a></li>
+          <li><a href="index.html" data-i18n="nav_about">센터 안내</a></li>
+          <li><a href="report.html" data-i18n="nav_report">신고하기</a></li>
+          <li><a href="result.html" data-i18n="nav_result">결과확인</a></li>
+          <li><a href="faq.html" class="active" aria-current="page" data-i18n="nav_faq">자주 묻는 질문</a></li>
+          <li class="lang-li">
+            <div class="lang-switch" role="group" aria-label="언어 선택" data-i18n-al="lang_aria">
+              <button type="button" data-lang="ko">KO</button>
+              <button type="button" data-lang="en">EN</button>
+            </div>
+          </li>
         </ul>
       </nav>
     </div>
@@ -33,9 +39,9 @@
   <main id="main">
     <section class="page-head">
       <div class="container">
-        <div class="breadcrumb"><a href="index.html">홈</a> › 자주 묻는 질문</div>
-        <h1>자주 묻는 질문</h1>
-        <p>신고 전 궁금한 점을 확인해 보세요.</p>
+        <div class="breadcrumb"><a href="index.html" data-i18n="bc_home">홈</a> › <span data-i18n="nav_faq">자주 묻는 질문</span></div>
+        <h1 data-i18n="page_faq_h">자주 묻는 질문</h1>
+        <p data-i18n="page_faq_p">신고 전 궁금한 점을 확인해 보세요.</p>
       </div>
     </section>
 
@@ -44,56 +50,56 @@
         <div class="faq-list">
 
           <div class="faq-item">
-            <button class="faq-q" aria-expanded="false">정말 익명이 보장되나요? <span class="chev">⌄</span></button>
-            <div class="faq-a"><div class="inner">
+            <button class="faq-q" aria-expanded="false"><span data-i18n="faq1_q">정말 익명이 보장되나요?</span> <span class="chev">⌄</span></button>
+            <div class="faq-a"><div class="inner" data-i18n="faq1_a">
               네. 본 센터는 접속 IP, 브라우저·단말기 식별 정보를 수집하거나 기록하지 않습니다.
               신고 과정에서 실명·연락처를 요구하지 않으며, 신고자를 특정할 수 있는 어떠한 정보도 저장되지 않도록 설계되어 있습니다.
             </div></div>
           </div>
 
           <div class="faq-item">
-            <button class="faq-q" aria-expanded="false">누구를 신고할 수 있나요? <span class="chev">⌄</span></button>
-            <div class="faq-a"><div class="inner">
+            <button class="faq-q" aria-expanded="false"><span data-i18n="faq2_q">누구를 신고할 수 있나요?</span> <span class="chev">⌄</span></button>
+            <div class="faq-a"><div class="inner" data-i18n="faq2_a">
               문경관광공사 임직원 및 공사의 업무를 수탁·대행하는 관계자의 직무 관련 부정·비위 행위가 대상입니다.
               금품수수, 예산·계약 부정, 갑질, 이해충돌, 채용비리, 공용물 유용 등이 포함됩니다.
             </div></div>
           </div>
 
           <div class="faq-item">
-            <button class="faq-q" aria-expanded="false">신고하면 어떻게 처리되나요? <span class="chev">⌄</span></button>
-            <div class="faq-a"><div class="inner">
+            <button class="faq-q" aria-expanded="false"><span data-i18n="faq3_q">신고하면 어떻게 처리되나요?</span> <span class="chev">⌄</span></button>
+            <div class="faq-a"><div class="inner" data-i18n-html="faq3_a_html">
               접수된 신고는 감사 담당 부서로 전달되어 사실관계 확인 및 조사가 진행됩니다.
               처리 경과와 결과는 접수 시 발급된 신고번호와 비밀번호로 <a href="result.html">결과확인</a> 메뉴에서 조회할 수 있습니다.
             </div></div>
           </div>
 
           <div class="faq-item">
-            <button class="faq-q" aria-expanded="false">신고번호를 잃어버리면 어떻게 하나요? <span class="chev">⌄</span></button>
-            <div class="faq-a"><div class="inner">
+            <button class="faq-q" aria-expanded="false"><span data-i18n="faq4_q">신고번호를 잃어버리면 어떻게 하나요?</span> <span class="chev">⌄</span></button>
+            <div class="faq-a"><div class="inner" data-i18n="faq4_a">
               익명성 보장을 위해 신고자 정보를 저장하지 않으므로, 분실된 신고번호·비밀번호는 복구가 불가능합니다.
               접수 완료 화면의 신고번호는 반드시 안전한 곳에 보관해 주세요.
             </div></div>
           </div>
 
           <div class="faq-item">
-            <button class="faq-q" aria-expanded="false">신고자는 어떤 보호를 받나요? <span class="chev">⌄</span></button>
-            <div class="faq-a"><div class="inner">
+            <button class="faq-q" aria-expanded="false"><span data-i18n="faq5_q">신고자는 어떤 보호를 받나요?</span> <span class="chev">⌄</span></button>
+            <div class="faq-a"><div class="inner" data-i18n="faq5_a">
               「공익신고자 보호법」 및 「부패방지 및 국민권익위원회의 설치와 운영에 관한 법률」에 따라
               신고자의 신분은 공개되지 않으며, 신고를 이유로 한 해고·징계 등 불이익 조치는 법으로 금지됩니다.
             </div></div>
           </div>
 
           <div class="faq-item">
-            <button class="faq-q" aria-expanded="false">증빙자료가 꼭 있어야 하나요? <span class="chev">⌄</span></button>
-            <div class="faq-a"><div class="inner">
+            <button class="faq-q" aria-expanded="false"><span data-i18n="faq6_q">증빙자료가 꼭 있어야 하나요?</span> <span class="chev">⌄</span></button>
+            <div class="faq-a"><div class="inner" data-i18n="faq6_a">
               필수는 아닙니다. 다만 사진·문서·녹취 등 객관적 자료가 있으면 조사에 큰 도움이 됩니다.
               자료에 신고자를 특정할 수 있는 정보(이름·사번 등)가 포함되지 않도록 확인 후 첨부해 주세요.
             </div></div>
           </div>
 
           <div class="faq-item">
-            <button class="faq-q" aria-expanded="false">허위로 신고하면 어떻게 되나요? <span class="chev">⌄</span></button>
-            <div class="faq-a"><div class="inner">
+            <button class="faq-q" aria-expanded="false"><span data-i18n="faq7_q">허위로 신고하면 어떻게 되나요?</span> <span class="chev">⌄</span></button>
+            <div class="faq-a"><div class="inner" data-i18n="faq7_a">
               고의적인 허위·비방 목적의 신고는 공익신고자 보호 대상에서 제외되며, 관련 법령에 따라 책임을 질 수 있습니다.
               확인된 사실에 근거하여 신고해 주시기 바랍니다.
             </div></div>
@@ -102,7 +108,7 @@
         </div>
 
         <div style="text-align:center;margin-top:40px;">
-          <a href="report.html" class="btn btn-primary btn-lg">신고하러 가기</a>
+          <a href="report.html" class="btn btn-primary btn-lg" data-i18n="faq_cta">신고하러 가기</a>
         </div>
       </div>
     </section>
@@ -110,10 +116,11 @@
 
   <footer class="site-footer">
     <div class="container">
-      <div class="copy">© <span data-year></span> 문경관광공사 공직비위 익명신고센터</div>
+      <div class="copy">© <span data-year></span> <span data-i18n="f_copy_simple">문경관광공사 공직비위 익명신고센터</span></div>
     </div>
   </footer>
 
+  <script src="js/i18n.js"></script>
   <script src="js/common.js"></script>
 </body>
 </html>
