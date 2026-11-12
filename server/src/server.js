@@ -8,16 +8,33 @@ const cookieParser = require('cookie-parser');
 
 // 시작 시 필수 시크릿 검증 (없으면 즉시 종료)
 try {
-  if (!process.env.MASTER_KEY || process.env.MASTER_KEY.length !== 64) {
-    throw new Error('MASTER_KEY(hex 64자)가 필요합니다. `npm run gen-keys` 참고.');
-  }
-  if (!process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 32) {
-    throw new Error('SESSION_SECRET(32자 이상)가 필요합니다. `npm run gen-keys` 참고.');
+  const mk = process.env.MASTER_KEY || '';
+  const ok = /^[0-9a-fA-F]{64}$/.test(mk) || mk.length >= 16;
+  if (!ok) throw new Error('MASTER_KEY가 필요합니다(hex 64자 권장, 최소 16자). `npm run gen-keys` 참고.');
+  if (!process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 16) {
+    throw new Error('SESSION_SECRET이 필요합니다(16자 이상, 권장 32자 이상). `npm run gen-keys` 참고.');
   }
 } catch (e) {
   console.error('[설정 오류] ' + e.message);
   process.exit(1);
 }
+
+// 클라우드 배포용: ADMIN_USER / ADMIN_PASSWORD 가 있으면 최초 1회 관리자 자동 생성
+(function bootstrapAdmin() {
+  const u = process.env.ADMIN_USER, p = process.env.ADMIN_PASSWORD;
+  if (!u || !p) return;
+  try {
+    const bcrypt = require('bcryptjs');
+    const { db } = require('./db');
+    const exists = db.prepare('SELECT id FROM admins WHERE username = ?').get(u);
+    if (!exists) {
+      db.prepare('INSERT INTO admins (username, password_hash) VALUES (?, ?)').run(u, bcrypt.hashSync(String(p), 12));
+      console.log(`[부트스트랩] 관리자 '${u}' 계정을 생성했습니다.`);
+    }
+  } catch (e) {
+    console.error('[부트스트랩] 관리자 생성 실패: ' + e.message);
+  }
+})();
 
 const reportRoutes = require('./routes/report');
 const adminRoutes = require('./routes/admin');

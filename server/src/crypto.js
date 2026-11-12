@@ -10,12 +10,22 @@ const crypto = require('crypto');
 
 const ALGO = 'aes-256-gcm';
 
+let _keyCache = null;
 function getKey() {
-  const hex = process.env.MASTER_KEY;
-  if (!hex || hex.length !== 64) {
-    throw new Error('MASTER_KEY 환경변수가 없거나 형식이 올바르지 않습니다(hex 64자 = 32바이트). `npm run gen-keys`로 생성하세요.');
+  if (_keyCache) return _keyCache;
+  const v = process.env.MASTER_KEY;
+  if (!v) {
+    throw new Error('MASTER_KEY 환경변수가 없습니다. `npm run gen-keys`로 생성하거나 호스팅 환경변수에 설정하세요.');
   }
-  return Buffer.from(hex, 'hex');
+  // 64자 hex(=32바이트)면 그대로 키로 사용, 그 외 문자열이면 SHA-256으로 32바이트 키 파생
+  if (/^[0-9a-fA-F]{64}$/.test(v)) {
+    _keyCache = Buffer.from(v, 'hex');
+  } else if (v.length >= 16) {
+    _keyCache = crypto.createHash('sha256').update(v, 'utf8').digest(); // 32바이트
+  } else {
+    throw new Error('MASTER_KEY가 너무 짧습니다(최소 16자, 권장: hex 64자).');
+  }
+  return _keyCache;
 }
 
 /** 문자열/버퍼 → 암호문 버퍼 (iv[12] | tag[16] | ciphertext) */

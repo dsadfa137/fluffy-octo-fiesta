@@ -6,8 +6,8 @@ const COOKIE = 'mgtc_admin';
 
 function secret() {
   const s = process.env.SESSION_SECRET;
-  if (!s || s.length < 32) {
-    throw new Error('SESSION_SECRET 환경변수가 없거나 너무 짧습니다(32자 이상). `npm run gen-keys`로 생성하세요.');
+  if (!s || s.length < 16) {
+    throw new Error('SESSION_SECRET 환경변수가 없거나 너무 짧습니다(16자 이상 권장 32자 이상). `npm run gen-keys`로 생성하세요.');
   }
   return s;
 }

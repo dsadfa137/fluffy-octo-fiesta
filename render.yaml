@@ -1,0 +1,38 @@
+# Render Blueprint — 문경관광공사 공직비위 익명신고센터
+# 사용법: https://dashboard.render.com → New + → Blueprint → 이 저장소(fluffy-octo-fiesta) 선택 → Apply
+# 배포 시 ADMIN_USER / ADMIN_PASSWORD 값을 입력하라는 안내가 뜹니다.
+
+services:
+  - type: web
+    name: mgtc-report-center
+    runtime: node
+    rootDir: server
+    plan: free                 # 무료: 동작 확인용. 실데이터 영구 보관은 하단 '영구 디스크' 참고
+    buildCommand: npm install
+    startCommand: node src/server.js
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MASTER_KEY         # 저장 암호화 마스터 키 — 자동 생성, 재배포에도 유지됨(분실 시 복호화 불가)
+        generateValue: true
+      - key: SESSION_SECRET     # 관리자 세션(JWT) 서명 키 — 자동 생성
+        generateValue: true
+      - key: ADMIN_USER         # 최초 관리자 아이디 — 배포 시 직접 입력(저장소에 저장되지 않음)
+        sync: false
+      - key: ADMIN_PASSWORD     # 최초 관리자 비밀번호 — 배포 시 직접 입력(10자 이상 권장)
+        sync: false
+
+    # ────────────────────────────────────────────────────────────────
+    # 【영구 디스크 — 실제 운영 시 필수, 유료 플랜 필요】
+    # 무료(free) 플랜은 파일시스템이 임시라 재배포·절전 시 신고 데이터가 사라집니다.
+    # 실제 운영에서는 아래처럼 바꾸세요:
+    #   1) plan: free  →  plan: starter   (이상)
+    #   2) 아래 disk 블록 주석 해제
+    #   3) envVars 에 DATA_DIR=/var/data 추가
+    # disk:
+    #   name: mgtc-data
+    #   mountPath: /var/data
+    #   sizeGB: 1
+    # ────────────────────────────────────────────────────────────────

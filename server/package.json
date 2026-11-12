@@ -9,6 +9,9 @@
     "seed-admin": "node scripts/seed-admin.js",
     "gen-keys": "node scripts/gen-keys.js"
   },
+  "engines": {
+    "node": ">=20 <23"
+  },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "better-sqlite3": "^11.8.1",
