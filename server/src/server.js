@@ -67,6 +67,11 @@ app.use(cookieParser());
 // API
 app.use('/api/reports', reportRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/content', require('./routes/content'));
+
+// 사이트 편집용 업로드 이미지(공개)
+const { UPLOAD_DIR } = require('./db');
+app.use('/uploads', express.static(UPLOAD_DIR, { maxAge: '1h' }));
 
 // 정적 프런트엔드 (프로젝트 루트) + 관리자 콘솔
 const WEB_ROOT = path.join(__dirname, '..', '..'); // mgtc-report-center/

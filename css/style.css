@@ -551,3 +551,32 @@ section.block { padding: 90px 0; }
   .lang-li { padding: 10px 14px 4px; }
   .lang-switch { width: max-content; }
 }
+
+/* ---------- 관리자 인라인 편집 ---------- */
+#mgtc-edit-toggle {
+  position: fixed; right: 20px; bottom: 20px; z-index: 900;
+  background: var(--forest-700); color: #fff; border: 0; border-radius: 999px;
+  padding: 12px 20px; font-weight: 800; font-size: .92rem; cursor: pointer;
+  box-shadow: 0 10px 26px rgba(11,46,99,.35);
+}
+#mgtc-edit-toggle:hover { background: var(--forest-900); }
+.mgtc-editable {
+  outline: 2px dashed var(--forest-500); outline-offset: 3px; border-radius: 4px;
+  cursor: text; transition: background-color .15s;
+}
+.mgtc-editable:hover, .mgtc-editable:focus { background: rgba(31,111,178,.08); outline-style: solid; }
+.mgtc-editable-img {
+  outline: 3px dashed var(--accent-red); outline-offset: 3px; cursor: pointer;
+}
+#mgtc-edit-bar {
+  position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); z-index: 901;
+  display: flex; align-items: center; gap: 12px;
+  background: #0b2e63; color: #fff; padding: 10px 14px; border-radius: 12px;
+  box-shadow: 0 12px 34px rgba(0,0,0,.4); font-size: .9rem; max-width: calc(100vw - 32px);
+}
+#mgtc-edit-bar .mgtc-bar-info { font-weight: 700; white-space: nowrap; }
+#mgtc-edit-bar .mgtc-bar-status { color: #9bd6f7; font-size: .84rem; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#mgtc-edit-bar button { border: 0; border-radius: 9px; padding: 9px 16px; font-weight: 800; font-size: .86rem; cursor: pointer; }
+#mgtc-cancel { background: rgba(255,255,255,.16); color: #fff; }
+#mgtc-save { background: var(--gold); color: #fff; }
+#mgtc-save:hover { background: var(--gold-dark); }

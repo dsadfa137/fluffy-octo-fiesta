@@ -6,7 +6,9 @@ const Database = require('better-sqlite3');
 
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, '..', 'data');
 const ATTACH_DIR = path.join(DATA_DIR, 'attachments');
+const UPLOAD_DIR = path.join(DATA_DIR, 'public-uploads'); // 사이트 편집용 이미지(공개)
 fs.mkdirSync(ATTACH_DIR, { recursive: true });
+fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
 const db = new Database(path.join(DATA_DIR, 'reports.db'));
 db.pragma('journal_mode = WAL');
@@ -58,8 +60,16 @@ CREATE TABLE IF NOT EXISTS admins (
   created_at    TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+CREATE TABLE IF NOT EXISTS content (
+  key        TEXT NOT NULL,
+  lang       TEXT NOT NULL,          -- 'ko' | 'en' | '*'(언어 무관: 이미지 등)
+  value      TEXT NOT NULL,
+  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+  PRIMARY KEY (key, lang)
+);
+
 CREATE INDEX IF NOT EXISTS idx_reports_no ON reports(report_no);
 CREATE INDEX IF NOT EXISTS idx_messages_report ON messages(report_id);
 `);
 
-module.exports = { db, DATA_DIR, ATTACH_DIR };
+module.exports = { db, DATA_DIR, ATTACH_DIR, UPLOAD_DIR };

@@ -14,7 +14,7 @@
   <header class="site-header">
     <div class="container inner">
       <a class="brand" href="index.html" aria-label="홈">
-        <img class="logo-img" src="assets/logo.png" alt="문경관광공사">
+        <img class="logo-img" data-edit-img="img_logo" src="assets/logo.png" alt="문경관광공사">
         <span class="divider"></span>
         <span class="brand-text"><b data-i18n="brand_main">공직비위 익명신고센터</b><span data-i18n="brand_sub">Anonymous Report Center</span></span>
       </a>
@@ -40,8 +40,8 @@
     <section class="page-head">
       <div class="container">
         <div class="breadcrumb"><a href="index.html" data-i18n="bc_home">홈</a> › <span data-i18n="nav_result">결과확인</span></div>
-        <h1 data-i18n="page_result_h">신고 처리결과 확인</h1>
-        <p data-i18n="page_result_p">접수 시 발급받은 신고번호와 비밀번호를 입력하세요.</p>
+        <h1 data-edit="page_result_h" data-i18n="page_result_h">신고 처리결과 확인</h1>
+        <p data-edit="page_result_p" data-i18n="page_result_p">접수 시 발급받은 신고번호와 비밀번호를 입력하세요.</p>
       </div>
     </section>
 
@@ -100,6 +100,7 @@
 
   <script src="js/i18n.js"></script>
   <script src="js/common.js"></script>
+  <script src="js/editor.js"></script>
   <script>
     (function () {
       var form = document.getElementById('lookupForm');
