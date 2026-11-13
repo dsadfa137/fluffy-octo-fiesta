@@ -1,8 +1,8 @@
-/* 문경관광공사 익명신고센터 — 인라인 콘텐츠 편집
- * - 모든 방문자: 저장된 콘텐츠 오버라이드([data-edit], [data-edit-img]) 적용
- * - 편집 모드는 "공개 사이트"에는 노출되지 않음.
- *   관리자 콘솔(/admin)의 '사이트 편집' 버튼으로 ?edit=1 로 열었을 때,
- *   그 탭에서만(관리자 인증 확인 후) 편집 UI가 활성화됨. sessionStorage로 탭 내 유지.
+/* 문경관광공사 익명신고센터 — 인라인 콘텐츠 편집(관리자)
+ * - 모든 방문자: 저장된 콘텐츠 오버라이드([data-edit], [data-edit-img])를 적용
+ * - 관리자(로그인 상태): 모든 페이지 우하단에 '✏️ 편집' 버튼 → 글자/이미지 직접 수정 → 저장
+ *   (비로그인/비관리자에게는 버튼이 보이지 않으며, 서버가 저장을 401로 거부함)
+ * 텍스트는 언어별로, 이미지는 언어 무관으로 저장됩니다.
  */
 (function () {
   'use strict';
@@ -24,32 +24,29 @@
       .catch(function () {});
   }
 
-  var SKEY = 'mgtc_edit', fileInput = null;
-
-  function wantEdit() {
-    if (/[?&]edit=1(?![0-9])/.test(location.search)) return true;
-    try { return sessionStorage.getItem(SKEY) === '1'; } catch (e) { return false; }
-  }
+  var editing = false, bar = null, fileInput = null;
 
   function start() {
     fetchApply();
     document.querySelectorAll('[data-lang]').forEach(function (b) {
       b.addEventListener('click', function () { setTimeout(fetchApply, 40); });
     });
-
-    if (!wantEdit()) return; // 공개 사이트: 편집 UI 없음 (관리자 로그인 여부와 무관)
-
-    // 편집 의도가 있을 때만 관리자 인증 확인
+    // 관리자 여부 확인 → 편집 버튼 노출 (관리자일 때만)
     fetch('/api/admin/me', { credentials: 'same-origin' })
-      .then(function (r) { return r.ok; })
-      .then(function (isAdmin) {
-        if (isAdmin) { try { sessionStorage.setItem(SKEY, '1'); } catch (e) {} startEditSession(); }
-        else { try { sessionStorage.removeItem(SKEY); } catch (e) {} }
-      })
+      .then(function (r) { if (r.ok) addToggle(); })
       .catch(function () {});
   }
 
-  function startEditSession() {
+  function addToggle() {
+    var btn = document.createElement('button');
+    btn.id = 'mgtc-edit-toggle'; btn.type = 'button'; btn.textContent = '✏️ 편집';
+    btn.addEventListener('click', function () { editing ? exitEdit() : enterEdit(); });
+    document.body.appendChild(btn);
+  }
+
+  function enterEdit() {
+    editing = true;
+    var t = document.getElementById('mgtc-edit-toggle'); if (t) t.textContent = '✕ 편집 종료';
     document.querySelectorAll('[data-edit]').forEach(function (el) {
       el.dataset._orig = el.textContent;
       el.setAttribute('contenteditable', 'true');
@@ -91,18 +88,16 @@
   }
 
   function showBar() {
-    var bar = document.createElement('div');
+    bar = document.createElement('div');
     bar.id = 'mgtc-edit-bar';
     bar.innerHTML =
       '<span class="mgtc-bar-info">✏️ 편집 모드 · 언어 ' + lang().toUpperCase() + '</span>' +
       '<span class="mgtc-bar-status" id="mgtc-bar-status"></span>' +
       '<button type="button" id="mgtc-revert">변경취소</button>' +
-      '<button type="button" id="mgtc-save">저장</button>' +
-      '<button type="button" id="mgtc-exit">편집 종료</button>';
+      '<button type="button" id="mgtc-save">저장</button>';
     document.body.appendChild(bar);
     document.getElementById('mgtc-save').addEventListener('click', save);
     document.getElementById('mgtc-revert').addEventListener('click', revert);
-    document.getElementById('mgtc-exit').addEventListener('click', exitSession);
   }
   function status(m) { var s = document.getElementById('mgtc-bar-status'); if (s) s.textContent = m; }
 
@@ -133,9 +128,20 @@
     status('변경을 되돌렸습니다(저장 전 상태).');
   }
 
-  function exitSession() {
-    try { sessionStorage.removeItem(SKEY); } catch (e) {}
-    location.href = location.pathname; // 쿼리 제거 + 깨끗한 공개 화면으로
+  function exitEdit() {
+    editing = false;
+    var t = document.getElementById('mgtc-edit-toggle'); if (t) t.textContent = '✏️ 편집';
+    document.querySelectorAll('[data-edit]').forEach(function (el) {
+      el.removeAttribute('contenteditable'); el.classList.remove('mgtc-editable');
+      // 저장하지 않은 변경은 되돌림
+      if (el.dataset._orig != null) el.textContent = el.dataset._orig;
+      delete el.dataset._orig;
+    });
+    document.querySelectorAll('[data-edit-img]').forEach(function (el) {
+      el.classList.remove('mgtc-editable-img'); el.removeEventListener('click', imgClick);
+    });
+    if (bar) { bar.remove(); bar = null; }
+    fetchApply(); // 저장된 최신 상태로 정규화
   }
 
   if (document.readyState !== 'loading') setTimeout(start, 0);
